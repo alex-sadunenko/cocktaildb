@@ -13,6 +13,11 @@
 		63A779B62506A19F008260BB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63A779B42506A19F008260BB /* Main.storyboard */; };
 		63A779B82506A1A2008260BB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63A779B72506A1A2008260BB /* Assets.xcassets */; };
 		63A779BB2506A1A2008260BB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63A779B92506A1A2008260BB /* LaunchScreen.storyboard */; };
+		63A779C32506A3B4008260BB /* DrinkTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A779C22506A3B4008260BB /* DrinkTableViewCell.swift */; };
+		63A779C92506AB2B008260BB /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A779C82506AB2B008260BB /* FiltersViewController.swift */; };
+		63A779CB2506AEBE008260BB /* CategoriesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A779CA2506AEBE008260BB /* CategoriesModel.swift */; };
+		63A779CD2506AF1F008260BB /* DrinksModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A779CC2506AF1F008260BB /* DrinksModel.swift */; };
+		63A779CF2506B544008260BB /* NetworkServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A779CE2506B544008260BB /* NetworkServiceManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +29,11 @@
 		63A779B72506A1A2008260BB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		63A779BA2506A1A2008260BB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		63A779BC2506A1A2008260BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		63A779C22506A3B4008260BB /* DrinkTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkTableViewCell.swift; sourceTree = "<group>"; };
+		63A779C82506AB2B008260BB /* FiltersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
+		63A779CA2506AEBE008260BB /* CategoriesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesModel.swift; sourceTree = "<group>"; };
+		63A779CC2506AF1F008260BB /* DrinksModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinksModel.swift; sourceTree = "<group>"; };
+		63A779CE2506B544008260BB /* NetworkServiceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,14 +67,43 @@
 			isa = PBXGroup;
 			children = (
 				63A779AE2506A19F008260BB /* AppDelegate.swift */,
+				63A779C42506A3BA008260BB /* View */,
+				63A779C72506A415008260BB /* Model */,
+				63A779D02506B5D1008260BB /* Network */,
 				63A779B02506A19F008260BB /* SceneDelegate.swift */,
-				63A779B22506A19F008260BB /* ViewController.swift */,
 				63A779B42506A19F008260BB /* Main.storyboard */,
 				63A779B72506A1A2008260BB /* Assets.xcassets */,
 				63A779B92506A1A2008260BB /* LaunchScreen.storyboard */,
 				63A779BC2506A1A2008260BB /* Info.plist */,
 			);
 			path = CocktailDB;
+			sourceTree = "<group>";
+		};
+		63A779C42506A3BA008260BB /* View */ = {
+			isa = PBXGroup;
+			children = (
+				63A779B22506A19F008260BB /* ViewController.swift */,
+				63A779C22506A3B4008260BB /* DrinkTableViewCell.swift */,
+				63A779C82506AB2B008260BB /* FiltersViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		63A779C72506A415008260BB /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				63A779CC2506AF1F008260BB /* DrinksModel.swift */,
+				63A779CA2506AEBE008260BB /* CategoriesModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		63A779D02506B5D1008260BB /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				63A779CE2506B544008260BB /* NetworkServiceManager.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -140,7 +179,12 @@
 			files = (
 				63A779B32506A19F008260BB /* ViewController.swift in Sources */,
 				63A779AF2506A19F008260BB /* AppDelegate.swift in Sources */,
+				63A779C32506A3B4008260BB /* DrinkTableViewCell.swift in Sources */,
+				63A779CB2506AEBE008260BB /* CategoriesModel.swift in Sources */,
+				63A779CF2506B544008260BB /* NetworkServiceManager.swift in Sources */,
+				63A779C92506AB2B008260BB /* FiltersViewController.swift in Sources */,
 				63A779B12506A19F008260BB /* SceneDelegate.swift in Sources */,
+				63A779CD2506AF1F008260BB /* DrinksModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,7 +337,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.sadunenko.CocktailDB;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -310,7 +354,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.sadunenko.CocktailDB;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
