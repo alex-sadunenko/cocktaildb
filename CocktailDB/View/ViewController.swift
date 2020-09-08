@@ -12,6 +12,7 @@ class ViewController: UIViewController {
     
     var categories: CategoryModel!
     var drinks: DrinksModel!
+    var drinkImages = [UIImage]()
     var networking = NetworkServiceManager()
 
     @IBOutlet weak var tableView: UITableView!
@@ -24,6 +25,15 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        dataFetch()
+            
+    }
+}
+// MARK: - Networking
+
+extension ViewController {
+    
+    func dataFetch() {
         let queue = DispatchQueue(label: "drinks", attributes: .concurrent)
         let group = DispatchGroup()
         
@@ -48,17 +58,14 @@ class ViewController: UIViewController {
         //    guard let _ = self.categories, let category = self.categories.drinks.first else { return }
         //    self.getPartDrinks(category: category.strCategory)
         //}
-            
-    }
-}
 
-extension ViewController {
+    }
     
     func getPartDrinks(category: String) {
         networking.dataFetcherDrinks(andpoint: "filter.php?c=\(category)") { (currentModel) in
             self.drinks = currentModel
             DispatchQueue.main.async {
-                            self.tableView.reloadData()
+                self.tableView.reloadData()
             }
         }
     }
@@ -76,6 +83,13 @@ extension ViewController: UITableViewDataSource {
         guard let drinks = self.drinks else { return UITableViewCell() }
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! DrinkTableViewCell
         cell.nameLabel.text = drinks.drinks[indexPath.row].strDrink
+        networking.dataFetcherImage(urlString: drinks.drinks[indexPath.row].strDrinkThumb, complition: { (image) in
+            DispatchQueue.main.async {
+                cell.drinkImage.image = image
+            }
+        })
+        //cell.drinkImage.image
+            //drinkImages = networking.dataFetcherImage(andpoint: <#T##String#>, complition: <#T##(UIImage) -> Void#>)
         return cell
     }
     

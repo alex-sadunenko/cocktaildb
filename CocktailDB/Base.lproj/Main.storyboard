@@ -72,6 +72,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="Drinks" id="LIu-ng-lfr">
                         <barButtonItem key="rightBarButtonItem" title="Item" image="FilterIcon" id="bS1-6p-QR8">
+                            <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
                                 <action selector="filterTapped:" destination="BYZ-38-t0r" id="fcJ-0D-NV9"/>
                             </connections>
