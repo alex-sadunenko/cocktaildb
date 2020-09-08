@@ -22,6 +22,7 @@ class ViewController: UIViewController {
     //MARK: - IBOutlets
 
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var indicator: UIActivityIndicatorView!
     
     //MARK: - IBActions
     
@@ -36,6 +37,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        indicator.isHidden = false
+        indicator.startAnimating()
         dataFetch()
             
     }
@@ -75,6 +78,10 @@ extension ViewController {
     }
     
     func getPartDrinks(category: String) {
+        DispatchQueue.main.async {
+            self.indicator.isHidden = false
+            self.indicator.startAnimating()
+        }
         networking.dataFetcherDrinks(andpoint: "filter.php?c=\(category)") { (currentModel) in
             if self.drinks == nil {
                 self.drinks = currentModel
@@ -84,6 +91,8 @@ extension ViewController {
             self.sectionData[category] = currentModel
             DispatchQueue.main.async {
                 self.tableView.reloadData()
+                self.indicator.isHidden = true
+                self.indicator.stopAnimating()
             }
         }
     }
@@ -107,10 +116,7 @@ extension ViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        //guard let drinks = self.drinks else { return 0 }
-        //return drinks.drinks.count
-        
+                
         let key = categories.drinks[section].strCategory
         if let value = sectionData[key] {
             return value.drinks.count
@@ -129,9 +135,16 @@ extension ViewController: UITableViewDataSource {
         if let value = self.sectionData[key] {
             
             cell.nameLabel.text = value.drinks[indexPath.row].strDrink
+            DispatchQueue.main.async {
+                self.indicator.isHidden = false
+                self.indicator.startAnimating()
+            }
             networking.dataFetcherImage(urlString: value.drinks[indexPath.row].strDrinkThumb, complition: { (image) in
                 DispatchQueue.main.async {
                     cell.drinkImage.image = image
+                    
+                    self.indicator.isHidden = true
+                    self.indicator.stopAnimating()
                 }
             })
         }
@@ -147,7 +160,7 @@ extension ViewController: UITableViewDataSource {
                 print(indexPath.section)
                 if categories.drinks.count > indexPath.section + 1 {
                     let key = categories.drinks[indexPath.section + 1].strCategory
-                    if let value = sectionData[key] {
+                    if let _ = sectionData[key] {
                         //print(value)
                     } else {
                         getPartDrinks(category: key)

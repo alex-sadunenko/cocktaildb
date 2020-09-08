@@ -29,6 +29,8 @@ class FiltersViewController: UIViewController {
     }
 }
 
+//MARK: - Table View Delegate
+
 extension FiltersViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -36,6 +38,8 @@ extension FiltersViewController: UITableViewDelegate {
     }
  
 }
+
+//MARK: - Table View Data Source
 
 extension FiltersViewController: UITableViewDataSource {
     
