@@ -122,26 +122,23 @@ extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let drinks = self.drinks else { return UITableViewCell() }
+        guard let _ = self.drinks else { return UITableViewCell() }
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! DrinkTableViewCell
-        cell.nameLabel.text = drinks.drinks[indexPath.row].strDrink
-        networking.dataFetcherImage(urlString: drinks.drinks[indexPath.row].strDrinkThumb, complition: { (image) in
-            DispatchQueue.main.async {
-                cell.drinkImage.image = image
-            }
-        })
+        
+        let key = categories.drinks[indexPath.section].strCategory
+        if let value = self.sectionData[key] {
+            
+            cell.nameLabel.text = value.drinks[indexPath.row].strDrink
+            networking.dataFetcherImage(urlString: value.drinks[indexPath.row].strDrinkThumb, complition: { (image) in
+                DispatchQueue.main.async {
+                    cell.drinkImage.image = image
+                }
+            })
+        }
         
         return cell
     }
-    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        print(section)
-        let key = categories.drinks[section].strCategory
-        if let value = sectionData[key] {
-            //print(value)
-        } else {
-            //getPartDrinks(category: key)
-        }
-    }
+    
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let key = categories.drinks[indexPath.section].strCategory
         if let value = sectionData[key] {
@@ -155,6 +152,11 @@ extension ViewController: UITableViewDataSource {
                     } else {
                         getPartDrinks(category: key)
                     }
+                } else {
+                    let alertController = UIAlertController(title: "Вы достигли конца списка", message: nil, preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    alertController.addAction(okAction)
+                    present(alertController, animated: true)
                 }
             }
         }

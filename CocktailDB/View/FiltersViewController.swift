@@ -16,8 +16,14 @@ class FiltersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let barButton = UIBarButtonItem(image: #imageLiteral(resourceName: "BackIcon"), landscapeImagePhone: nil, style: .done, target: self, action: #selector(revealBackClicked))
+        navigationItem.leftBarButtonItem = barButton
     }
 
+    @objc func revealBackClicked() {
+        navigationController?.popViewController(animated: true)
+    }
+    
     @IBAction func applyTapped(_ sender: UIButton) {
         performSegue(withIdentifier: "unwindSegueToDrinks", sender: sender)
     }
