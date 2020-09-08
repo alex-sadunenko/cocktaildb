@@ -22,21 +22,35 @@ class NetworkServiceManager {
     }
     
     func dataFetcherDrinks(andpoint: String, complition: @escaping (DrinksModel) -> Void) {
-        //let clearAndpoint = andpoint.replacingOccurrences(of: " ", with: "_")
-        request(urlString: baseURL + andpoint) { (data, error) -> (Void) in
+        var clearAndpoint = andpoint.replacingOccurrences(of: " ", with: "_")
+        clearAndpoint = String(clearAndpoint.filter { !" \n\t\r".contains($0) })
+        //clearAndpoint = andpoint.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
+        request(urlString: baseURL + clearAndpoint) { (data, error) -> (Void) in
             let decoder = JSONDecoder()
-            guard let data = data else { return }
+            guard let data = data, data.count != 0 else { return }
             let response = try? decoder.decode(DrinksModel.self, from: data)
             complition(response!)
         }
     }
+    
+//    func dataFetcherImage(andpoint: String, complition: @escaping (UIImage) -> Void) {
+//        var clearAndpoint = andpoint.replacingOccurrences(of: " ", with: "_")
+//        clearAndpoint = String(clearAndpoint.filter { !" \n\t\r".contains($0) })
+//        request(urlString: baseURL + clearAndpoint) { (data, error) -> (Void) in
+//            let decoder = JSONDecoder()
+//            guard let data = data, data.count != 0 else { return }
+//            let response = try? decoder.decode(DrinksModel.self, from: data)
+//            complition(response!)
+//        }
+//    }
+    
     func request(urlString: String, complition: @escaping (Data?, Error?) -> (Void)) {
         guard let url = URL(string: urlString) else { return }
         let request = URLRequest(url: url)
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            DispatchQueue.main.async {
+            //DispatchQueue.main.async {
                 complition(data, error)
-            }
+            //}
         }
         task.resume()
     }

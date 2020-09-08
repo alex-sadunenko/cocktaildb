@@ -8,82 +8,75 @@
 
 import UIKit
 
-var categories: CategoryModel!
-var drinks: DrinksModel!
-var networking = NetworkServiceManager()
-
 class ViewController: UIViewController {
     
+    var categories: CategoryModel!
+    var drinks: DrinksModel!
+    var networking = NetworkServiceManager()
+
     @IBOutlet weak var tableView: UITableView!
     
     @IBAction func filterTapped(_ sender: UIBarButtonItem) {
+        tableView.reloadData()
         print(categories.drinks)
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        networking.dataFetcherCategory(andpoint: "list.php?c=list") { (currentModel) in
-            categories = currentModel
-            guard let category = categories.drinks.first else { return }
-            self.getPartDrinks(category: category.strCategory)
+        let queue = DispatchQueue(label: "drinks", attributes: .concurrent)
+        let group = DispatchGroup()
+        
+        group.enter()
+        queue.async(group: group) {
+            self.networking.dataFetcherCategory(andpoint: "list.php?c=list") { (currentModel) in
+                self.categories = currentModel
+                group.leave()
+            }
         }
         
-//        let queue = DispatchQueue.global(qos: .utility)
-//        queue.async {
-//            networking.dataFetcherCategory(andpoint: "list.php?c=list") { (currentModel) in
-//                categories = currentModel
-//                guard let category = categories.drinks.first else { return }
-//                DispatchQueue.main.async {
-//                    self.getPartDrinks(category: category.strCategory)
-//                }
-//                //self.getPartDrinks(category: category.strCategory)
-//            }
-//            //categories = currentModel
-//        }
+        group.wait()
         
-//        delay(1) {
-//            guard let category = categories.drinks.first else { return }
-//            networking.dataFetcherDrinks(andpoint: "filter.php?c=\(category.strCategory)") { (currentModel) in
-//                drinks = currentModel
-//            }
-//        }
-//
-//        delay(1) {
-//            self.tableView.reloadData()
-//        }
+        group.enter()
+        queue.async(group: group) {
+            guard let _ = self.categories, let category = self.categories.drinks.first else { return }
+            self.getPartDrinks(category: category.strCategory)
+            group.leave()
+        }
 
+        //group.notify(queue: .main) {
+        //    guard let _ = self.categories, let category = self.categories.drinks.first else { return }
+        //    self.getPartDrinks(category: category.strCategory)
+        //}
+            
     }
-    
 }
 
 extension ViewController {
     
     func getPartDrinks(category: String) {
         networking.dataFetcherDrinks(andpoint: "filter.php?c=\(category)") { (currentModel) in
-            drinks = currentModel
+            self.drinks = currentModel
+            DispatchQueue.main.async {
+                            self.tableView.reloadData()
+            }
         }
     }
     
-    func delay(_ delay: Int, closure: @escaping () -> ()) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(delay)) {
-            closure()
-        }
-    }
 }
 
 extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let drinks = drinks else { return 0 }
+        guard let drinks = self.drinks else { return 0 }
         return drinks.drinks.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let drinks = drinks else { return UITableViewCell() }
-        let cell = tableView.dequeueReusableCell(withIdentifier: "DrinkTableViewCell", for: indexPath) as! DrinkTableViewCell
+        guard let drinks = self.drinks else { return UITableViewCell() }
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! DrinkTableViewCell
         cell.nameLabel.text = drinks.drinks[indexPath.row].strDrink
         return cell
     }
-    
     
 }
