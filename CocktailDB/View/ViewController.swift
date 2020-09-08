@@ -156,12 +156,12 @@ extension ViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let key = categories.drinks[indexPath.section].strCategory
+        let key = checkCategories[indexPath.section]!
         if let value = sectionData[key] {
             if indexPath.row == value.drinks.count - 1 {
-                if categories.drinks.count > indexPath.section + 1 {
+                if checkCategories.count > indexPath.section + 1 {
                     
-                    let key = categories.drinks[indexPath.section + 1].strCategory
+                    let key = checkCategories[indexPath.section + 1]!
                     if let _ = sectionData[key] {
                     } else {
                         getPartDrinks(category: key)
