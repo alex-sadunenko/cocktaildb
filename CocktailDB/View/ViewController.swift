@@ -14,8 +14,8 @@ class ViewController: UIViewController {
     
     var categories: CategoryModel!
     var drinks: DrinksModel!
-    var drinkImages = [UIImage]()
-    var chekEnable: [Bool]!
+    var checkEnable = [Bool]()
+    var checkCategories = [Int: String]()
     var sectionData = [String: DrinksModel]()
     var networking = NetworkServiceManager()
 
@@ -31,7 +31,9 @@ class ViewController: UIViewController {
     
     @IBAction func unwindSegue(_ segue: UIStoryboardSegue) {
         guard let source = segue.source as? FiltersViewController else { return }
-        chekEnable = source.chekEnable
+        checkEnable = source.checkEnable
+        checkCategories = source.checkCategories
+        tableView.reloadData()
     }
     
     override func viewDidLoad() {
@@ -40,6 +42,7 @@ class ViewController: UIViewController {
         indicator.isHidden = false
         indicator.startAnimating()
         dataFetch()
+        tableView.tableFooterView = UIView(frame: CGRect.zero)
             
     }
 }
@@ -56,7 +59,10 @@ extension ViewController {
         queue.async(group: group) {
             self.networking.dataFetcherCategory(andpoint: "list.php?c=list") { (currentModel) in
                 self.categories = currentModel
-                self.chekEnable = Array(repeating: true, count: self.categories.drinks.count)
+                for item in 0..<self.categories.drinks.count {
+                    self.checkCategories[item] = self.categories.drinks[item].strCategory
+                }
+                self.checkEnable = Array(repeating: true, count: self.categories.drinks.count)
                 group.leave()
             }
         }
@@ -69,11 +75,6 @@ extension ViewController {
             self.getPartDrinks(category: category.strCategory)
             group.leave()
         }
-
-        //group.notify(queue: .main) {
-        //    guard let _ = self.categories, let category = self.categories.drinks.first else { return }
-        //    self.getPartDrinks(category: category.strCategory)
-        //}
 
     }
     
@@ -104,22 +105,24 @@ extension ViewController {
 extension ViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        
-        guard let categories = self.categories else { return 0 }
-        return categories.drinks.count
+        var countSections = 0
+        for item in 0..<checkEnable.count {
+            countSections += checkEnable[item] ? 1 : 0
+        }
+        return countSections
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        
-        guard let categories = self.categories else { return "" }
-        return categories.drinks[section].strCategory
+        return checkCategories[section]
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
                 
-        let key = categories.drinks[section].strCategory
+        let key = checkCategories[section]!
         if let value = sectionData[key] {
             return value.drinks.count
+        } else if section == 0 {
+            getPartDrinks(category: key)
         }
         
         return 0
@@ -131,7 +134,7 @@ extension ViewController: UITableViewDataSource {
         guard let _ = self.drinks else { return UITableViewCell() }
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! DrinkTableViewCell
         
-        let key = categories.drinks[indexPath.section].strCategory
+        let key = checkCategories[indexPath.section]!
         if let value = self.sectionData[key] {
             
             cell.nameLabel.text = value.drinks[indexPath.row].strDrink
@@ -156,25 +159,32 @@ extension ViewController: UITableViewDataSource {
         let key = categories.drinks[indexPath.section].strCategory
         if let value = sectionData[key] {
             if indexPath.row == value.drinks.count - 1 {
-                print(indexPath.row)
-                print(indexPath.section)
                 if categories.drinks.count > indexPath.section + 1 {
+                    
                     let key = categories.drinks[indexPath.section + 1].strCategory
                     if let _ = sectionData[key] {
-                        //print(value)
                     } else {
                         getPartDrinks(category: key)
                     }
+                    
                 } else {
+                    
                     let alertController = UIAlertController(title: "Вы достигли конца списка", message: nil, preferredStyle: .alert)
                     let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
                     alertController.addAction(okAction)
+                    
                     present(alertController, animated: true)
+                    
                 }
             }
         }
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+
+    }
 }
 
 //MARK: - Table View Delegate
@@ -194,7 +204,8 @@ extension ViewController {
         if segue.identifier == "segueToFilters" {
             guard let destination = segue.destination as? FiltersViewController else { return }
             destination.categories = self.categories
-            destination.chekEnable = chekEnable
+            destination.checkEnable = checkEnable
+            destination.checkCategories = checkCategories
         }
     }
 }

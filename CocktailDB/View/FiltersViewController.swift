@@ -11,12 +11,14 @@ import UIKit
 class FiltersViewController: UIViewController {
 
     var categories: CategoryModel!
-    var chekEnable: [Bool]!
+    var checkEnable = [Bool]()
+    var checkCategories = [Int: String]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let barButton = UIBarButtonItem(image: #imageLiteral(resourceName: "BackIcon"), landscapeImagePhone: nil, style: .done, target: self, action: #selector(revealBackClicked))
+        barButton.tintColor = .black
         navigationItem.leftBarButtonItem = barButton
     }
 
@@ -25,6 +27,13 @@ class FiltersViewController: UIViewController {
     }
     
     @IBAction func applyTapped(_ sender: UIButton) {
+        var currentlyCheck = 0
+        for item in 0..<checkEnable.count {
+            if checkEnable[item] {
+                checkCategories[currentlyCheck] = categories.drinks[item].strCategory
+                currentlyCheck += 1
+            }
+        }
         performSegue(withIdentifier: "unwindSegueToDrinks", sender: sender)
     }
 }
@@ -50,8 +59,12 @@ extension FiltersViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = categories.drinks[indexPath.row].strCategory
-        //cell.accessoryType = .checkmark
-        cell.accessoryType = chekEnable[indexPath.row] ? .checkmark : .none
+        cell.accessoryType = checkEnable[indexPath.row] ? .checkmark : .none
+//        if let resultCheck = chekEnable[indexPath.row] {
+//            cell.accessoryType = checkEnable ? .checkmark : .none
+//        } else {
+//            cell.accessoryType = .none
+//        }
         return cell
     }
     
@@ -59,8 +72,15 @@ extension FiltersViewController: UITableViewDataSource {
         
         tableView.deselectRow(at: indexPath, animated: true)
         if let cell = tableView.cellForRow(at: indexPath) {
-            cell.accessoryType = !chekEnable[indexPath.row] ? .checkmark : .none
-            chekEnable[indexPath.row] = !chekEnable[indexPath.row]
+            cell.accessoryType = !checkEnable[indexPath.row] ? .checkmark : .none
+            checkEnable[indexPath.row] = !checkEnable[indexPath.row]
+//            if let resultCheck = chekEnable[indexPath.row] {
+//                cell.accessoryType = !resultCheck ? .checkmark : .none
+//                chekEnable[indexPath.row] = !resultCheck
+//            } else {
+//                cell.accessoryType = .none
+//                chekEnable[indexPath.row] = false
+//            }
         }
     }
     
